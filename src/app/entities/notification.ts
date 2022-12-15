@@ -7,6 +7,7 @@ export interface INotification {
   category: string;
   recipientId: string;
   readAt?: Date | null;
+  canceledAt?: Date | null;
   createdAt: Date;
 }
 
@@ -14,8 +15,8 @@ export class Notification {
   private _id: string;
   private data: INotification;
 
-  constructor(data: Replace<INotification, { createdAt?: Date }>) {
-    this._id = randomUUID();
+  constructor(data: Replace<INotification, { createdAt?: Date }>, id?: string) {
+    this._id = id ?? randomUUID();
     this.data = {
       ...data,
       createdAt: data.createdAt ?? new Date(),
@@ -54,8 +55,20 @@ export class Notification {
     return this.data.readAt;
   }
 
-  public set readAt(readAt: Date | null | undefined) {
-    this.data.readAt = readAt;
+  public read() {
+    this.data.readAt = new Date();
+  }
+
+  public unread() {
+    this.data.readAt = null;
+  }
+
+  public get canceledAt(): Date | null | undefined {
+    return this.data.canceledAt;
+  }
+
+  public cancel() {
+    this.data.canceledAt = new Date();
   }
 
   public get createdAt(): Date {
